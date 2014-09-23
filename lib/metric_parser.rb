@@ -9,7 +9,7 @@ class MetricParser
   def parse_container(container)
     parsed_file = CSV.read(@file_path, {:col_sep => "\t"})
     container_groups = parsed_file.group_by { |i| i[1] }
-    
+
     @container = container_groups[container]
 
     container_hash = {}
@@ -54,6 +54,41 @@ class MetricParser
   else
     p "#{container_3["container"]} has the highest average temperature."
   end
+
+  def parse_all
+    parsed_file = CSV.read(@file_path, {:col_sep => "\t"})
+    count = 0
+    @all_ph = 0
+    @all_nsl = 0
+    @all_temp = 0
+    @all_wl = 0
+    parsed_file.each do |day|
+      @all_ph += day[2].to_f
+      @all_nsl += day[3].to_f
+      @all_temp += day[4].to_f
+      @all_wl += day[5].to_f
+      count += 1
+    end
+    avg_ph = @all_ph/count
+    avg_nsl = @all_nsl/count
+    avg_temp = @all_temp/count
+    avg_wl = @all_wl/count
+
+    all_avg_hash = {}
+
+    all_avg_hash["average_ph"] = avg_ph.round(2)
+    all_avg_hash["average_nutrient_solution_level"] = avg_nsl.round(2)
+    all_avg_hash["average_temp"] = avg_temp.round(2)
+    all_avg_hash["average_water_level"] = avg_wl.round(2)
+
+    p "All Averages:"
+    p all_avg_hash
+
+  end
+
+  self.new("data/metrics.tsv").parse_all
+
+
 
 end
 
