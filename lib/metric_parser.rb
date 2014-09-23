@@ -11,14 +11,15 @@ class MetricParser
     container_groups = parsed_file.group_by { |i| i[1] }
 
     @container = container_groups[container]
-
     container_hash = {}
+    container_hash["container"] = container
 
     max_water_level_day = @container.max_by { |x| x[5] }
-
     max_water_level = max_water_level_day[5]
 
-    container_hash["container"] = container
+    max_ph_day = @container.max_by { |x| x[2] }
+    max_ph = max_ph_day[5]
+
 
     count = 0
     @total_ph = 0
@@ -37,12 +38,12 @@ class MetricParser
     avg_temp = @total_temp/count
     avg_wl = @total_wl/count
 
-
     container_hash["average_ph"] = avg_ph.round(2)
     container_hash["average_nutrient_solution_level"] = avg_nsl.round(2)
     container_hash["average_temp"] = avg_temp.round(2)
     container_hash["average_water_level"] = avg_wl.round(2)
     container_hash["max_water_level"] = max_water_level
+    container_hash["max_ph"] = max_ph
 
     p container_hash
 
@@ -60,7 +61,7 @@ class MetricParser
   container_3 = self.new("data/metrics.tsv").parse_container("container3")
   p "-"*80
 
-  # highest average temperature
+  # container with highest average temperature
 
   if container_1["average_temp"] > container_2["average_temp"] && container_1["average_temp"] > container_3["average_temp"]
     p "#{container_1["container"]} has the highest average temperature."
@@ -71,7 +72,7 @@ class MetricParser
   end
   p "-"*80
 
-  # highest absolute water level
+  # container with highest absolute water level
 
   if container_1["max_water_level"] > container_2["max_water_level"] && container_1["max_water_level"] > container_3["max_water_level"]
     p "#{container_1["container"]} has the highest absolute water level."
@@ -80,6 +81,18 @@ class MetricParser
   else
     p "#{container_3["container"]} has the highest absolute water level."
   end
+  p "-"*80
+
+  # container with highest absolute ph level for the one day (there is no range of dates)
+
+  if container_1["max_ph"] > container_2["max_ph"] && container_1["max_ph"] > container_3["max_ph"]
+    p "#{container_1["container"]} has the highest absolute ph."
+  elsif container_2["max_ph"] > container_1["max_ph"] && container_2["max_ph"] > container_3["max_ph"]
+    p "#{container_2["container"]} has the highest absolute ph."
+  else
+    p "#{container_3["container"]} has the highest absolute ph."
+  end
+
 
   def parse_all
     parsed_file = CSV.read(@file_path, {:col_sep => "\t"})
@@ -101,7 +114,6 @@ class MetricParser
     avg_wl = @all_wl/count
 
     all_avg_hash = {}
-
     all_avg_hash["average_ph"] = avg_ph.round(2)
     all_avg_hash["average_nutrient_solution_level"] = avg_nsl.round(2)
     all_avg_hash["average_temp"] = avg_temp.round(2)
