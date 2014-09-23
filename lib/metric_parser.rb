@@ -10,14 +10,37 @@ class MetricParser
     parsed_file = CSV.read(@file_path, {:col_sep => "\t"})
     container_groups = parsed_file.group_by { |i| i[1] }
     @container = container_groups[container]
+
+    container_hash = {}
+
+    container_hash["container"] = container
+
     count = 0
     @total_ph = 0
+    @total_nsl = 0
+    @total_temp = 0
+    @total_wl = 0
     @container.each do |day|
       @total_ph += day[2].to_f
+      @total_nsl += day[3].to_f
+      @total_temp += day[4].to_f
+      @total_wl += day[5].to_f
       count += 1
     end
     avg_ph = @total_ph/count
-    p avg_ph.round(2)
+    avg_nsl = @total_nsl/count
+    avg_temp = @total_temp/count
+    avg_wl = @total_wl/count
+
+
+    container_hash["average_ph"] = avg_ph.round(2)
+    container_hash["average_nutrient_solution_level"] = avg_nsl.round(2)
+    container_hash["average_temp"] = avg_temp.round(2)
+    container_hash["average_water_level"] = avg_wl.round(2)
+
+    p container_hash
+
+
   end
 
 end
