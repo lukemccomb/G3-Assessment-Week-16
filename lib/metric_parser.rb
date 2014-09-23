@@ -14,6 +14,10 @@ class MetricParser
 
     container_hash = {}
 
+    max_water_level_day = @container.max_by { |x| x[5] }
+
+    max_water_level = max_water_level_day[5]
+
     container_hash["container"] = container
 
     count = 0
@@ -38,14 +42,25 @@ class MetricParser
     container_hash["average_nutrient_solution_level"] = avg_nsl.round(2)
     container_hash["average_temp"] = avg_temp.round(2)
     container_hash["average_water_level"] = avg_wl.round(2)
+    container_hash["max_water_level"] = max_water_level
 
     p container_hash
 
   end
 
+  # container hashes
+
+  p "Container 1:"
   container_1 = self.new("data/metrics.tsv").parse_container("container1")
+  p "-"*80
+  p "Container 2:"
   container_2 = self.new("data/metrics.tsv").parse_container("container2")
+  p "-"*80
+  p "Container 3:"
   container_3 = self.new("data/metrics.tsv").parse_container("container3")
+  p "-"*80
+
+  # highest average temperature
 
   if container_1["average_temp"] > container_2["average_temp"] && container_1["average_temp"] > container_3["average_temp"]
     p "#{container_1["container"]} has the highest average temperature."
@@ -53,6 +68,17 @@ class MetricParser
     p "#{container_2["container"]} has the highest average temperature."
   else
     p "#{container_3["container"]} has the highest average temperature."
+  end
+  p "-"*80
+
+  # highest absolute water level
+
+  if container_1["max_water_level"] > container_2["max_water_level"] && container_1["max_water_level"] > container_3["max_water_level"]
+    p "#{container_1["container"]} has the highest absolute water level."
+  elsif container_2["max_water_level"] > container_1["max_water_level"] && container_2["max_water_level"] > container_3["max_water_level"]
+    p "#{container_2["container"]} has the highest absolute water level."
+  else
+    p "#{container_3["container"]} has the highest absolute water level."
   end
 
   def parse_all
@@ -81,6 +107,7 @@ class MetricParser
     all_avg_hash["average_temp"] = avg_temp.round(2)
     all_avg_hash["average_water_level"] = avg_wl.round(2)
 
+    p "-"*80
     p "All Averages:"
     p all_avg_hash
 
@@ -88,11 +115,5 @@ class MetricParser
 
   self.new("data/metrics.tsv").parse_all
 
-
-
 end
 
-
-# MetricParser.new("data/metrics.tsv").parse_container("container1")
-# MetricParser.new("data/metrics.tsv").parse_container("container2")
-# MetricParser.new("data/metrics.tsv").parse_container("container3")
