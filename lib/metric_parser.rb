@@ -1,5 +1,7 @@
 require "csv"
 
+# FYI this code is super smelly! Needs refactoring big time.
+
 class MetricParser
 
   def initialize(file)
@@ -19,7 +21,6 @@ class MetricParser
 
     max_ph_day = @container.max_by { |x| x[2] }
     max_ph = max_ph_day[5]
-
 
     count = 0
     @total_ph = 0
